@@ -343,7 +343,20 @@ export default function App() {
       alternateRowStyles: { fillColor: [245, 245, 245] },
     });
 
-    doc.save(`diary_export_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.pdf`);
+    const fileName = `diary_export_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.pdf`;
+    
+    // Mobile-friendly export
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      const blob = doc.output('blob');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } else {
+      doc.save(fileName);
+    }
   };
 
   const filteredActivities = useMemo(() => {
@@ -611,19 +624,28 @@ export default function App() {
                             </div>
                             <h3 className="text-lg font-bold leading-tight">{activity.title}</h3>
                           </div>
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => exportToPDF([activity])}
+                              className="p-2 hover:bg-zinc-100 rounded-lg text-zinc-500"
+                              title="Export to PDF"
+                            >
+                              <FileDown className="w-4 h-4" />
+                            </button>
                             <button 
                               onClick={() => {
                                 setEditingActivity(activity);
                                 setView('form');
                               }}
                               className="p-2 hover:bg-zinc-100 rounded-lg text-zinc-500"
+                              title="Edit"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button 
                               onClick={() => handleDeleteActivity(activity.id)}
                               className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                              title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -916,12 +938,13 @@ export default function App() {
                           <th className="px-6 py-3 font-semibold text-zinc-500 uppercase tracking-wider text-[10px]">Venue</th>
                           <th className="px-6 py-3 font-semibold text-zinc-500 uppercase tracking-wider text-[10px]">Contact</th>
                           <th className="px-6 py-3 font-semibold text-zinc-500 uppercase tracking-wider text-[10px]">Files</th>
+                          <th className="px-6 py-3 font-semibold text-zinc-500 uppercase tracking-wider text-[10px]">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-100">
                         {filteredActivities.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="px-6 py-12 text-center text-zinc-400 italic">
+                            <td colSpan={7} className="px-6 py-12 text-center text-zinc-400 italic">
                               No results matching your filters.
                             </td>
                           </tr>
@@ -962,6 +985,34 @@ export default function App() {
                                     </button>
                                   ))}
                                   {a.attachments.length === 0 && <span className="text-zinc-300">-</span>}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => exportToPDF([a])}
+                                    className="p-1.5 hover:bg-zinc-100 rounded-md text-zinc-500 transition-colors"
+                                    title="Export to PDF"
+                                  >
+                                    <FileDown className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button 
+                                    onClick={() => {
+                                      setEditingActivity(a);
+                                      setView('form');
+                                    }}
+                                    className="p-1.5 hover:bg-zinc-100 rounded-md text-zinc-500 transition-colors"
+                                    title="Edit"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteActivity(a.id)}
+                                    className="p-1.5 hover:bg-red-50 rounded-md text-red-500 transition-colors"
+                                    title="Delete"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
