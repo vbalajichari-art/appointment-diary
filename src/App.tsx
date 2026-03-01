@@ -542,7 +542,7 @@ export default function App() {
               Copyright © 2026 Balaji Venkatachary
             </p>
             <p className="text-[9px] text-zinc-400 font-medium">
-              All rights reserved
+              All rights reserved • v1.1.0
             </p>
           </div>
         </div>
@@ -630,6 +630,17 @@ export default function App() {
                   Restore
                   <input type="file" className="hidden" accept=".json" onChange={restoreData} />
                 </label>
+                <button 
+                  onClick={() => {
+                    if (confirm('Force refresh to check for updates?')) {
+                      window.location.reload();
+                    }
+                  }} 
+                  className="hover:text-zinc-900 transition-colors flex items-center gap-1"
+                >
+                  <Repeat className="w-3 h-3" />
+                  Update
+                </button>
               </div>
             </div>
           )}
