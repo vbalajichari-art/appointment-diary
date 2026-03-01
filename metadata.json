@@ -1,0 +1,7 @@
+{
+  "name": "Appointment Diary",
+  "description": "A professional, offline-first PWA for managing academic appointments, meetings, and research discussions with local attachment support.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
